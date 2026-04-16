@@ -19,7 +19,6 @@ interface Candidate {
   conduct: string;
   experience: string;
   aspiration1: string;
-  aspiration2: string;
   scores: Scores;
   total_score: number;
 }
@@ -36,7 +35,6 @@ const DEPARTMENTS = [
 export default function App() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedDept1, setSelectedDept1] = useState<string>('');
-  const [selectedDept2, setSelectedDept2] = useState<string>('');
   const [selectedCandidateId, setSelectedCandidateId] = useState<string>('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState<string>(DEPARTMENTS[0]);
@@ -49,7 +47,6 @@ export default function App() {
     conduct: 'Tốt',
     experience: '',
     aspiration1: DEPARTMENTS[0],
-    aspiration2: DEPARTMENTS[1],
   });
 
   useEffect(() => {
@@ -89,7 +86,7 @@ export default function App() {
       });
       setShowAddForm(false);
       setNewCandidate({
-        name: '', class_name: '', academic_performance: 'Giỏi', conduct: 'Tốt', experience: '', aspiration1: DEPARTMENTS[0], aspiration2: DEPARTMENTS[1]
+        name: '', class_name: '', academic_performance: 'Giỏi', conduct: 'Tốt', experience: '', aspiration1: DEPARTMENTS[0]
       });
     } catch (error) {
       console.error("Error adding candidate: ", error);
@@ -119,8 +116,7 @@ export default function App() {
   };
 
   const filteredForDropdown = candidates.filter(c => {
-    if (selectedDept1 && c.aspiration1 !== selectedDept1 && c.aspiration2 !== selectedDept1) return false;
-    if (selectedDept2 && c.aspiration1 !== selectedDept2 && c.aspiration2 !== selectedDept2) return false;
+    if (selectedDept1 && c.aspiration1 !== selectedDept1) return false;
     return true;
   });
 
@@ -194,17 +190,10 @@ export default function App() {
                   <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Kinh nghiệm</label>
                   <textarea value={newCandidate.experience} onChange={e => setNewCandidate({...newCandidate, experience: e.target.value})} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:text-white focus:outline-none text-sm h-20" placeholder="Từng tham gia CLB..." />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">NV 1</label>
+                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Nguyện vọng</label>
                     <select value={newCandidate.aspiration1} onChange={e => setNewCandidate({...newCandidate, aspiration1: e.target.value})} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:text-white focus:outline-none">
-                      {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">NV 2</label>
-                    <select value={newCandidate.aspiration2} onChange={e => setNewCandidate({...newCandidate, aspiration2: e.target.value})} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:text-white focus:outline-none">
-                      <option value="">Không có</option>
                       {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                   </div>
@@ -224,17 +213,10 @@ export default function App() {
             </h2>
             
             <div className="space-y-4 mb-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Lọc: Bộ phận 1</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Lọc theo Bộ phận</label>
                   <select value={selectedDept1} onChange={e => {setSelectedDept1(e.target.value); setSelectedCandidateId('');}} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-lg text-sm">
-                    <option value="">Tất cả</option>
-                    {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Lọc: Bộ phận 2</label>
-                  <select value={selectedDept2} onChange={e => {setSelectedDept2(e.target.value); setSelectedCandidateId('');}} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-lg text-sm">
                     <option value="">Tất cả</option>
                     {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
@@ -268,7 +250,7 @@ export default function App() {
                   </div>
                   <div className="text-sm text-slate-600 dark:text-slate-300 flex flex-col gap-1">
                     <span><strong className="text-slate-800 dark:text-slate-200">Lớp:</strong> {selectedCandidate.class_name} | <strong className="text-slate-800 dark:text-slate-200">Học lực:</strong> {selectedCandidate.academic_performance}</span>
-                    <span className="truncate"><strong className="text-slate-800 dark:text-slate-200">NV1:</strong> {selectedCandidate.aspiration1}</span>
+                    <span className="truncate"><strong className="text-slate-800 dark:text-slate-200">Nguyện vọng:</strong> {selectedCandidate.aspiration1}</span>
                   </div>
                 </div>
 
@@ -334,7 +316,7 @@ export default function App() {
 
           {(() => {
             const deptCandidates = candidates.filter(
-              (c) => c.aspiration1 === activeTab || c.aspiration2 === activeTab
+              (c) => c.aspiration1 === activeTab
             );
 
             return (
@@ -389,13 +371,8 @@ export default function App() {
                           <td className="px-5 py-4">
                             <div className="flex flex-col text-xs gap-1.5 min-w-[200px] whitespace-normal">
                               <span className="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 px-2 py-1 rounded font-bold">
-                                1. {c.aspiration1}
+                                {c.aspiration1}
                               </span>
-                              {c.aspiration2 && (
-                                <span className="text-slate-600 dark:text-slate-300 px-2 py-0.5 font-medium">
-                                  2. {c.aspiration2}
-                                </span>
-                              )}
                             </div>
                           </td>
                         </tr>
