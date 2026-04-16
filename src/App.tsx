@@ -122,6 +122,15 @@ export default function App() {
 
   const selectedCandidate = candidates.find(c => c.id === selectedCandidateId);
 
+  const getQuotaForDept = (dept: string) => {
+    if (dept.includes("Sa bàn")) return 3;
+    if (dept.includes("Phần Cứng")) return 5;
+    if (dept.includes("Phần Mềm")) return 1;
+    if (dept.includes("Kế toán")) return 2;
+    if (dept.includes("Hậu Cần")) return 2;
+    return 0;
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
       <header className="bg-indigo-600 dark:bg-indigo-900 text-white py-4 px-6 shadow-md flex flex-wrap sm:flex-nowrap justify-between items-center gap-4 sticky top-0 z-10 transition-colors duration-200">
@@ -343,40 +352,55 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                      {deptCandidates.map((c, idx) => (
-                        <tr
-                          key={c.id}
-                          className={cn(
-                            "transition-colors cursor-pointer bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80",
-                            selectedCandidateId === c.id
-                              ? "ring-2 ring-inset ring-indigo-500 dark:ring-indigo-400 z-10 relative"
-                              : ""
-                          )}
-                          onClick={() => setSelectedCandidateId(c.id)}
-                        >
-                          <td className="px-5 py-4 font-black">#{idx + 1}</td>
-                          <td className="px-5 py-4">
-                            <div className="font-extrabold text-base">
-                              {c.name}
-                            </div>
-                          </td>
-                          <td className="px-5 py-4 font-semibold text-slate-700 dark:text-slate-200">
-                            {c.class_name}
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className="font-black text-lg">
-                              {c.total_score}
-                            </span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="flex flex-col text-xs gap-1.5 min-w-[200px] whitespace-normal">
-                              <span className="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 px-2 py-1 rounded font-bold">
-                                {c.aspiration1}
+                      {deptCandidates.map((c, idx) => {
+                        const quota = getQuotaForDept(activeTab);
+                        const isPass = idx < quota;
+                        const bgColor = isPass 
+                          ? "bg-green-100 dark:bg-emerald-900/30 text-green-900 dark:text-emerald-100 border-l-4 border-green-500" 
+                          : "bg-red-50 dark:bg-rose-900/20 text-red-900 dark:text-rose-100 border-l-4 border-red-500";
+                          
+                        return (
+                          <tr
+                            key={c.id}
+                            className={cn(
+                              "transition-colors cursor-pointer hover:opacity-80",
+                              bgColor,
+                              selectedCandidateId === c.id
+                                ? "ring-2 ring-inset ring-indigo-500 dark:ring-indigo-400 z-10 relative"
+                                : ""
+                            )}
+                            onClick={() => setSelectedCandidateId(c.id)}
+                          >
+                            <td className="px-5 py-4 font-black">#{idx + 1}</td>
+                            <td className="px-5 py-4">
+                              <div className="font-extrabold text-base">
+                                {c.name}
+                                {isPass ? (
+                                  <span className="bg-green-600 dark:bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full ml-2">ĐẠT</span>
+                                ) : (
+                                  <span className="bg-red-600 dark:bg-rose-600 text-white text-[10px] px-2 py-0.5 rounded-full ml-2">LOẠI</span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-5 py-4 font-semibold opacity-90">{c.class_name}</td>
+                            <td className="px-5 py-4">
+                              <span className="font-black text-lg">
+                                {c.total_score}
                               </span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="px-5 py-4">
+                              <div className="flex flex-col text-xs gap-1.5 min-w-[200px] whitespace-normal">
+                                <span className={cn(
+                                  "px-2 py-1 rounded font-bold",
+                                  isPass ? "bg-green-200/50 dark:bg-green-800/30" : "bg-red-200/50 dark:bg-red-800/30"
+                                )}>
+                                  {c.aspiration1}
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                       {deptCandidates.length === 0 && (
                         <tr>
                           <td
