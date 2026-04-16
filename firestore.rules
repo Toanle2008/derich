@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: candidates
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string
+    //   - class_name: string
+    //   - academic_performance: string
+    //   - conduct: string
+    //   - experience: string
+    //   - aspiration1: string
+    //   - aspiration2: string
+    //   - scores: map { social: number, attitude: number, expertise: number, preliminary: number }
+    //   - total_score: number
+    //
+    // Note: The user explicitly requested a public app without login.
+    // ===============================================================
+
+    match /candidates/{candidateId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+  }
+}

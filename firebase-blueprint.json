@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "Candidate": {
+      "title": "Candidate",
+      "description": "A candidate being evaluated.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Candidate full name"
+        },
+        "class_name": {
+          "type": "string",
+          "description": "Candidate class"
+        },
+        "academic_performance": {
+          "type": "string",
+          "description": "Academic performance"
+        },
+        "conduct": {
+          "type": "string",
+          "description": "Conduct evaluation"
+        },
+        "experience": {
+          "type": "string",
+          "description": "Prior experience"
+        },
+        "aspiration1": {
+          "type": "string",
+          "description": "First choice division"
+        },
+        "aspiration2": {
+          "type": "string",
+          "description": "Second choice division"
+        },
+        "scores": {
+          "type": "object",
+          "description": "Evaluation scores",
+          "properties": {
+            "social": { "type": "number", "minimum": 0, "maximum": 10 },
+            "attitude": { "type": "number", "minimum": 0, "maximum": 10 },
+            "expertise": { "type": "number", "minimum": 0, "maximum": 10 },
+            "preliminary": { "type": "number", "minimum": 0, "maximum": 10 }
+          }
+        },
+        "total_score": {
+          "type": "number",
+          "description": "Calculated total score"
+        }
+      },
+      "required": ["name", "class_name", "aspiration1"]
+    }
+  },
+  "firestore": {
+    "/candidates/{candidateId}": {
+      "schema": "Candidate",
+      "description": "Stores candidates"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Tuyển Chọn Thành Viên",
+  "description": "Web app chấm điểm ứng viên tuyển chọn, sử dụng Firebase Firestore thời gian thực.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
