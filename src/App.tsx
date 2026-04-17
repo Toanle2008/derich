@@ -39,6 +39,15 @@ export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState<string>(DEPARTMENTS[0]);
   
+  const [quotas, setQuotas] = useState<Record<string, number>>({
+    "🏯 Bộ phận Nghiên cứu & Chế tạo Sa bàn": 3,
+    "⚙️ Bộ Phận Phát Triển Phần Cứng": 5,
+    "💻 Bộ Phận Phát Triển Phần Mềm": 1,
+    "🧧 Bộ phận Kế toán thường trực": 2,
+    "📦 Bộ Phận Hậu Cần": 2,
+    "📏 Bộ phận Phát triển Bản vẽ Kỹ thuật": 0
+  });
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [newCandidate, setNewCandidate] = useState({
     name: '',
@@ -121,15 +130,6 @@ export default function App() {
   });
 
   const selectedCandidate = candidates.find(c => c.id === selectedCandidateId);
-
-  const getQuotaForDept = (dept: string) => {
-    if (dept.includes("Sa bàn")) return 3;
-    if (dept.includes("Phần Cứng")) return 5;
-    if (dept.includes("Phần Mềm")) return 1;
-    if (dept.includes("Kế toán")) return 2;
-    if (dept.includes("Hậu Cần")) return 2;
-    return 0;
-  };
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
@@ -333,11 +333,21 @@ export default function App() {
                 key={activeTab}
                 className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col transition-colors duration-200"
               >
-                <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col justify-between items-start gap-2">
+                <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <h2 className="text-base font-bold flex items-center gap-2 text-slate-900 dark:text-white">
                     <Trophy className="w-5 h-5 text-amber-500" />
                     {activeTab} ({deptCandidates.length})
                   </h2>
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <label>Chỉ tiêu đạt:</label>
+                    <input 
+                      type="number" 
+                      min="0" 
+                      value={quotas[activeTab] || 0}
+                      onChange={(e) => setQuotas({...quotas, [activeTab]: parseInt(e.target.value) || 0})}
+                      className="w-16 px-2 py-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none text-center"
+                    />
+                  </div>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -353,7 +363,7 @@ export default function App() {
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                       {deptCandidates.map((c, idx) => {
-                        const quota = getQuotaForDept(activeTab);
+                        const quota = quotas[activeTab] || 0;
                         const isPass = idx < quota;
                         const bgColor = isPass 
                           ? "bg-green-100 dark:bg-emerald-900/30 text-green-900 dark:text-emerald-100 border-l-4 border-green-500" 
