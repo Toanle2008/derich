@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, doc, onSnapshot, updateDoc, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { collection, doc, onSnapshot, updateDoc, addDoc, setDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { db } from './firebase';
 import { cn } from './lib/utils';
 import { Plus, Minus, Trophy, UserPlus, FileText, Activity, Sun, Moon } from 'lucide-react';
@@ -81,6 +81,28 @@ export default function App() {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, 'settings', 'quotas'), (docSnap) => {
+      if (docSnap.exists()) {
+        setQuotas(prev => ({ ...prev, ...docSnap.data() }));
+      }
+    }, (error) => {
+      console.error("Firestore Error fetching quotas:", error);
+    });
+    return () => unsub();
+  }, []);
+
+  const handleQuotaChange = async (dept: string, newQuota: number) => {
+    setQuotas(prev => ({ ...prev, [dept]: newQuota }));
+    try {
+      await setDoc(doc(db, 'settings', 'quotas'), {
+        [dept]: newQuota
+      }, { merge: true });
+    } catch (e) {
+      console.error("Error updating quota in db:", e);
+    }
+  };
 
   const handleAddCandidate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -344,7 +366,7 @@ export default function App() {
                       type="number" 
                       min="0" 
                       value={quotas[activeTab] || 0}
-                      onChange={(e) => setQuotas({...quotas, [activeTab]: parseInt(e.target.value) || 0})}
+                      onChange={(e) => handleQuotaChange(activeTab, parseInt(e.target.value) || 0)}
                       className="w-16 px-2 py-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none text-center"
                     />
                   </div>
